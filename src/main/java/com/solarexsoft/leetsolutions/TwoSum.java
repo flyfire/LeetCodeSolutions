@@ -1,5 +1,7 @@
 package com.solarexsoft.leetsolutions;
 
+import java.util.HashMap;
+
 /**
  * Created by houruhou on 2018/7/26.
  */
@@ -20,10 +22,26 @@ public class TwoSum {
         return null;
     }
 
+    public static int[] twoSum2(int[] nums, int target) {
+        int size = nums.length;
+        HashMap<Integer, Integer> numMaps = new HashMap<>();
+        for (int i = 0; i < size; i++) {
+            int left = target - nums[i];
+            if (numMaps.containsKey(left)) {
+                return new int[]{i, numMaps.get(left)};
+            }
+            numMaps.put(nums[i], i);
+        }
+        return null;
+    }
+
     public static void main(String[] args) {
-        int[] sums = {2, 4, 5, 6, 8, 7, 3};
+        int[] nums = {2, 4, 5, 6, 8, 7, 3};
         int target = 9;
-        int[] result = twoSum(sums, target);
+        int[] result = twoSum(nums, target);
+        System.out.println(result[0] + "," + result[1]);
+
+        result = twoSum2(nums, target);
         System.out.println(result[0] + "," + result[1]);
     }
 }
