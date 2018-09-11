@@ -4,8 +4,9 @@ import java.util.HashMap;
 
 /**
  * Created by houruhou on 2018/7/26.
+ * https://leetcode-cn.com/problems/two-sum/description/
  */
-public class TwoSum {
+public class L0001TwoSum {
     public static int[] twoSum(int[] nums, int target) {
         int size = nums.length;
         for (int i = 0; i < size - 1; i++) {
