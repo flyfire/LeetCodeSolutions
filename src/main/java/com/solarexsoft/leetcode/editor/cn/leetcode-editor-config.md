@@ -1,6 +1,9 @@
 ### LeetcodeEditor 配置
 
 
++ [LeetCodeEditor Plugin](https://github.com/shuzijun/leetcode-editor)
+
+
 + 文件名
 
 ```
