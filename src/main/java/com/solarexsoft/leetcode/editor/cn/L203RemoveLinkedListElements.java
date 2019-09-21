@@ -28,7 +28,8 @@ public class L203RemoveLinkedListElements {
  * }
  */
 class Solution {
-    public ListNode removeElements(ListNode head, int val) {
+
+    public ListNode solution1(ListNode head, int val) {
         while (head != null && head.val == val) {
             ListNode delNode = head;
             head = delNode.next;
@@ -48,6 +49,19 @@ class Solution {
             }
         }
         return head;
+    }
+    public ListNode removeElements(ListNode head, int val) {
+        ListNode dummyHead = new ListNode(-1);
+        dummyHead.next = head;
+        ListNode prev = dummyHead;
+        while (prev.next != null) {
+            if (prev.next.val == val) {
+                prev.next = prev.next.next;
+            } else {
+                prev = prev.next;
+            }
+        }
+        return dummyHead.next;
     }
 }
 //leetcode submit region end(Prohibit modification and deletion)
