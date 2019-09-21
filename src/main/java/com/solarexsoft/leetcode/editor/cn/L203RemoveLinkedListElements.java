@@ -50,7 +50,8 @@ class Solution {
         }
         return head;
     }
-    public ListNode removeElements(ListNode head, int val) {
+
+    public ListNode solution2(ListNode head, int val) {
         ListNode dummyHead = new ListNode(-1);
         dummyHead.next = head;
         ListNode prev = dummyHead;
@@ -62,6 +63,18 @@ class Solution {
             }
         }
         return dummyHead.next;
+    }
+    public ListNode removeElements(ListNode head, int val) {
+        if (head == null) {
+            return null;
+        }
+        ListNode res = removeElements(head.next, val);
+        if (head.val == val) {
+            return res;
+        } else {
+            head.next = res;
+            return head;
+        }
     }
 }
 //leetcode submit region end(Prohibit modification and deletion)
