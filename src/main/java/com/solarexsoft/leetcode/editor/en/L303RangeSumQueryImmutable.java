@@ -24,8 +24,8 @@
 package com.solarexsoft.leetcode.editor.en;
 public class L303RangeSumQueryImmutable {
     public static void main(String[] args) {
-         int[] nums = {-2, 0, 3, -5, 2, -1};
-         NumArray array = new L303RangeSumQueryImmutable().new NumArray(nums);
+        int[] nums = {-2, 0, 3, -5, 2, -1};
+        NumArray array = new L303RangeSumQueryImmutable().new NumArray(nums);
         System.out.println(array.sumRange(0, 5));
     }
     
