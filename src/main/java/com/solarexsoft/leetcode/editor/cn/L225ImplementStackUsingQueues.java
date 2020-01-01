@@ -46,8 +46,7 @@ public class L225ImplementStackUsingQueues {
 
 //leetcode submit region begin(Prohibit modification and deletion)
 class MyStack {
-    Deque<Integer> first = new LinkedList<>();
-    Deque<Integer> last = new LinkedList<>();
+    Queue<Integer> queue = new LinkedList<>();
 
     /** Initialize your data structure here. */
     public MyStack() {
@@ -56,32 +55,33 @@ class MyStack {
     
     /** Push element x onto stack. */
     public void push(int x) {
-        first.add(x);
+        queue.offer(x);
+    }
+
+    private void shift() {
+        int size = queue.size();
+        for (int i = 0; i < size - 1; i++) {
+            queue.offer(queue.poll());
+        }
     }
     
     /** Removes the element on top of the stack and returns that element. */
     public int pop() {
-        if (last.isEmpty()) {
-            while (!first.isEmpty()) {
-                last.addFirst(first.remove());
-            }
-        }
-        return last.remove();
+        shift();
+        return queue.poll();
     }
     
     /** Get the top element. */
     public int top() {
-        if (last.isEmpty()) {
-            while (!first.isEmpty()) {
-                last.addFirst(first.remove());
-            }
-        }
-        return last.peek();
+        shift();
+        int res = queue.poll();
+        queue.offer(res);
+        return res;
     }
     
     /** Returns whether the stack is empty. */
     public boolean empty() {
-        return first.isEmpty() && last.isEmpty();
+        return queue.isEmpty();
     }
 }
 
