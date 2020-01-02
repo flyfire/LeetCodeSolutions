@@ -36,11 +36,15 @@
  * SolutionComments: https://solarex.github.io/leetcode-solution-comments/
  */
 package com.solarexsoft.leetcode.editor.cn;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class L98ValidateBinarySearchTree {
     public static void main(String[] args) {
          Solution solution = new L98ValidateBinarySearchTree().new Solution();
     }
-    
+
 
 //leetcode submit region begin(Prohibit modification and deletion)
 /**
@@ -54,7 +58,8 @@ public class L98ValidateBinarySearchTree {
  */
 class Solution {
     public boolean isValidBST(TreeNode root) {
-        return isValidBSTRecursive(root, null, null);
+//        return isValidBSTRecursive(root, null, null);
+        return isValidBSTNonRecursive(root);
     }
 
     public boolean isValidBSTRecursive(TreeNode root, TreeNode lower, TreeNode upper) {
@@ -62,6 +67,28 @@ class Solution {
         if (lower != null && lower.val >= root.val) return false;
         if (upper != null && upper.val <= root.val) return false;
         return isValidBSTRecursive(root.left, lower, root) && isValidBSTRecursive(root.right, root, upper);
+    }
+
+    private void inOrder(TreeNode root, List<Integer> result) {
+        if (root == null) {
+            return;
+        }
+        inOrder(root.left, result);
+        result.add(root.val);
+        inOrder(root.right, result);
+    }
+
+    private boolean isValidBSTNonRecursive(TreeNode root) {
+        List<Integer> result = new ArrayList<>();
+        inOrder(root, result);
+        Integer[] integers = result.toArray(new Integer[0]);
+        int size = integers.length;
+        for (int i = 0; i < size - 1; i++) {
+            if (integers[i] >= integers[i+1]) {
+                return false;
+            }
+        }
+        return true;
     }
 }
 //leetcode submit region end(Prohibit modification and deletion)
