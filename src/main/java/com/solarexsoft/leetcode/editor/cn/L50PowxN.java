@@ -40,20 +40,17 @@ public class L50PowxN {
 //leetcode submit region begin(Prohibit modification and deletion)
 class Solution {
     public double myPow(double x, int n) {
-        if (n == 0) {
-            return 1.0;
-        }
-        if (n < 0) {
+        long N = n;
+        if (N < 0) {
             x = 1/x;
-            n = -n;
+            N = -N;
         }
         double result = 1.0;
-        while (n != 0) {
-            if ((n&1) == 1) {
+        for (; N > 0; N = N/2) {
+            if ((N & 1) == 1) {
                 result *= x;
             }
-            x*=x;
-            n>>=1;
+            x *= x;
         }
         return result;
     }
