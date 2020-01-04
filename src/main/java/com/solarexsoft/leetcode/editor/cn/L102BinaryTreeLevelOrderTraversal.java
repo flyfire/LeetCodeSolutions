@@ -50,20 +50,20 @@ class Solution {
         if (root == null) {
             return new ArrayList<>();
         }
-        Deque<TreeNode> deque = new LinkedList<>();
+        Queue<TreeNode> queue = new LinkedList<>();
         List<List<Integer>> result = new ArrayList<>();
-        deque.add(root);
-        while (!deque.isEmpty()) {
-            int len = deque.size();
+        queue.add(root);
+        while (!queue.isEmpty()) {
+            int len = queue.size();
             List<Integer> currentLevel = new ArrayList<>();
             for (int i = 0; i < len; i++) {
-                TreeNode head = deque.remove();
+                TreeNode head = queue.remove();
                 currentLevel.add(head.val);
                 if (head.left != null) {
-                    deque.add(head.left);
+                    queue.add(head.left);
                 }
                 if (head.right != null) {
-                    deque.add(head.right);
+                    queue.add(head.right);
                 }
             }
             result.add(currentLevel);
