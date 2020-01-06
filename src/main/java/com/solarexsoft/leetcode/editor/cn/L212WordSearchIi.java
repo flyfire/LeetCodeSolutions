@@ -35,8 +35,7 @@
  */
 package com.solarexsoft.leetcode.editor.cn;
 
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class L212WordSearchIi {
     public static void main(String[] args) {
@@ -54,8 +53,34 @@ class Solution {
         int m = board.length;
         int n = board[0].length;
         boolean[][] visited = new boolean[m][n];
+
+        Set<String> result = new HashSet<>();
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                dfs(board, visited, "", i, j, trie, result);
+            }
+        }
+
+        return new ArrayList<>(result);
     }
 
+    private void dfs(char[][] board, boolean[][] visited, String str, int i, int j, Trie trie, Set<String> result) {
+        if (i < 0 || i >= board.length || j < 0 || j >= board[0].length) return;
+        if (visited[i][j]) return;
+
+        String tmp = str + board[i][j];
+        if (!trie.startsWith(tmp)) return;
+
+        if (trie.search(tmp)) {
+            result.add(tmp);
+        }
+        visited[i][j] = true;
+        dfs(board, visited, tmp, i + 1, j, trie, result);
+        dfs(board, visited, tmp, i - 1, j, trie, result);
+        dfs(board, visited, tmp, i, j + 1, trie, result);
+        dfs(board, visited, tmp, i, j - 1, trie, result);
+        visited[i][j] = false;
+    }
     private class TrieNode{
         public boolean isWord;
         public HashMap<Character, TrieNode> next;
