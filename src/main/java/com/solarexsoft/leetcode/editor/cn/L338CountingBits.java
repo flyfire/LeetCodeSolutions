@@ -34,8 +34,13 @@ public class L338CountingBits {
 //leetcode submit region begin(Prohibit modification and deletion)
 class Solution {
     public int[] countBits(int num) {
+        if (num == 0) {
+            return new int[] {0};
+        }
         int[] result = new int[num + 1];
-        for (int i = 0; i <= num; i++) {
+        result[0] = 0;
+        result[1] = 1;
+        for (int i = 2; i <= num; i++) {
             result[i] = result[ i & (i-1)] + 1;
         }
         return result;
