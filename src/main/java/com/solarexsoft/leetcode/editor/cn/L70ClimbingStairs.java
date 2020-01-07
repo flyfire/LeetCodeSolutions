@@ -41,6 +41,7 @@ class Solution {
         if (n < 3) {
             return n;
         }
+        /*
         int[] result = new int[n+1];
         result[0] = 0;
         result[1] = 1;
@@ -49,6 +50,15 @@ class Solution {
             result[i] = result[i-1] + result[i-2];
         }
         return result[n];
+        */
+        int first = 1;
+        int second = 2;
+        for (int i = 3; i <= n; i++) {
+            int third = first + second;
+            first = second;
+            second = third;
+        }
+        return second;
     }
 }
 //leetcode submit region end(Prohibit modification and deletion)
