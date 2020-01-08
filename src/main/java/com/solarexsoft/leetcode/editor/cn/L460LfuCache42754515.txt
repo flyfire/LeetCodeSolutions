@@ -1,0 +1,63 @@
+class LFUCache {
+    HashMap<Integer, Integer> vals;
+    HashMap<Integer, Integer> counts;
+    HashMap<Integer, LinkedHashSet<Integer>> sameCountLists;
+    int cap;
+    int min = -1;
+    public LFUCache(int capacity) {
+        cap = capacity;
+        vals = new HashMap<>();
+        counts = new HashMap<>();
+        sameCountLists = new HashMap<>();
+        sameCountLists.put(1, new LinkedHashSet<>());
+    }
+    
+    public int get(int key) {
+        if (!vals.containsKey(key)) {
+            return -1;
+        }
+        int count = counts.get(key);
+        counts.put(key, count + 1);
+        sameCountLists.get(count).remove(key);
+
+        if (count == min && sameCountLists.size() == 0) {
+            min++;
+        }
+        if (!sameCountLists.containsKey(count + 1)) {
+            sameCountLists.put(count + 1, new LinkedHashSet<>());
+        }
+        sameCountLists.get(count + 1).add(key);
+        return vals.get(key);
+    }
+    
+    public void put(int key, int value) {
+        if (cap <= 0) {
+            return;
+        }
+        if (vals.containsKey(key)) {
+            vals.put(key, value);
+            get(key);
+            return;
+        }
+        if (vals.size() >= cap) {
+            int evit = sameCountLists.get(min).iterator().next();
+            sameCountLists.get(min).remove(evit);
+            vals.remove(evit);
+            counts.remove(evit);
+        }
+        vals.put(key, value);
+        counts.put(key, 1);
+        sameCountLists.get(1).add(key);
+        min = 1;
+    }
+}
+
+/**
+ * Your LFUCache object will be instantiated and called as such:
+ * LFUCache obj = new LFUCache(capacity);
+ * int param_1 = obj.get(key);
+ * obj.put(key,value);
+ */
+
+//runtime_error:
+//last_testcase:["LFUCache","put","put","get","put","get","get","put","get","get","get"] [[2],[1,1],[2,2],[1],[3,3],[2],[3],[4,4],[1],[3],[4]]
