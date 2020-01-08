@@ -53,6 +53,23 @@ class Solution {
         if (root == null) {
             return true;
         }
+        return isSymmetricChild(root.left, root.right);
+    }
+
+    boolean isSymmetricChild(TreeNode s, TreeNode t) {
+        if (s == null && t == null) {
+            return true;
+        }
+        if (s == null || t == null) {
+            return false;
+        }
+        return s.val == t.val && isSymmetricChild(s.left, t.right) && isSymmetricChild(s.right, t.left);
+    }
+
+    boolean isSymmetricIteration(TreeNode root) {
+        if (root == null) {
+            return true;
+        }
         Stack<TreeNode> stack = new Stack<>();
         stack.push(root.left);
         stack.push(root.right);
