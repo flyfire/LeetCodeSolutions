@@ -91,10 +91,47 @@ class Solution {
         if (s == null) return false;
         return map.get(s).equals(map.get(t)) || isSub(s.left, t) || isSub(s.right, t);
     }
+
+    private boolean isTreeEquals(TreeNode master, TreeNode slave) {
+        if (master == null && slave == null) {
+            return true;
+        } else if (master != null && slave != null) {
+            if (master.val == slave.val) {
+                if (!isTreeEquals(master.left, slave.left)) {
+                    return false;
+                }
+                if (!isTreeEquals(master.right, slave.right)) {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+        return true;
+    }
     public boolean isSubtree(TreeNode s, TreeNode t) {
+        /*
         computeHash(s);
         computeHash(t);
         return isSub(s, t);
+        */
+        if (isTreeEquals(s, t)) {
+            return true;
+        } else {
+            if (s.left != null) {
+                if (isSubtree(s.left, t)) {
+                    return true;
+                }
+            }
+            if (s.right != null) {
+                if (isSubtree(s.right, t)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }
 //leetcode submit region end(Prohibit modification and deletion)
