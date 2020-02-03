@@ -119,8 +119,17 @@ class ZeroEvenOdd {
     private Condition even = lock.newCondition();
     private volatile int count = 1;
     private volatile int who = 0;
+    private int oddMax,evenMax;
+    private int oddI = 1, evenI = 2;
     public ZeroEvenOdd(int n) {
         this.n = n;
+        if (n % 2 == 0) {
+            evenMax = n;
+            oddMax = n - 1;
+        } else {
+            evenMax = n - 1;
+            oddMax = n;
+        }
     }
 
     // printNumber.accept(x) outputs "x", where x is an integer.
@@ -153,11 +162,12 @@ class ZeroEvenOdd {
     public void even(IntConsumer printNumber) throws InterruptedException {
         lock.lock();
         try {
-            while (count <= n) {
+            for (; evenI <= evenMax; evenI+=2) {
                 while (who != 2) {
                     even.await();
                 }
-                printNumber.accept(count++);
+                printNumber.accept(evenI);
+                count++;
                 who = 0;
                 zero.signalAll();
                 even.await();
@@ -170,11 +180,12 @@ class ZeroEvenOdd {
     public void odd(IntConsumer printNumber) throws InterruptedException {
         lock.lock();
         try {
-            while (count <= n) {
+            for (; oddI <= oddMax; oddI+=2) {
                 while (who != 1) {
                     odd.await();
                 }
-                printNumber.accept(count++);
+                printNumber.accept(oddI);
+                count++;
                 who = 0;
                 zero.signalAll();
                 odd.await();
