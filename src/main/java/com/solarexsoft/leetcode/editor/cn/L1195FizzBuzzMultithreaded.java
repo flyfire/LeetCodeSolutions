@@ -45,7 +45,7 @@ import java.util.function.IntConsumer;
 
 public class L1195FizzBuzzMultithreaded {
     public static void main(String[] args) {
-         FizzBuzz fizzBuzz = new L1195FizzBuzzMultithreaded().new FizzBuzz(20);
+         FizzBuzz fizzBuzz = new L1195FizzBuzzMultithreaded().new FizzBuzz(15);
          Thread threadA = new Thread(new FizzBuzzRunnable(fizzBuzz, 0), "A");
          Thread threadB = new Thread(new FizzBuzzRunnable(fizzBuzz, 1), "B");
          Thread threadC = new Thread(new FizzBuzzRunnable(fizzBuzz, 2), "C");
@@ -149,7 +149,7 @@ class FizzBuzz {
                     threeCon.await();
                 }
                 if (i % 3 == 0 && i % 5 != 0) {
-                    System.out.println(i + " --> fizz");
+                    printFizz.run();
                     who = 0;
                     numberCon.signalAll();
                 }
@@ -168,7 +168,7 @@ class FizzBuzz {
                     fiveCon.await();
                 }
                 if (i % 5 == 0 && i % 3 != 0) {
-                    System.out.println(i + " --> buzz");
+                    printBuzz.run();
                     who = 0;
                     numberCon.signalAll();
                 }
@@ -187,7 +187,7 @@ class FizzBuzz {
                     fifteenCon.await();
                 }
                 if (i % 3 == 0 && i % 5 == 0) {
-                    System.out.println(i + " --> fizzbuzz");
+                    printFizzBuzz.run();
                     who = 0;
                     numberCon.signalAll();
                 }
@@ -221,6 +221,12 @@ class FizzBuzz {
                     printNumber.accept(i);
                 }
             }
+            who = 15;
+            fifteenCon.signalAll();
+            who = 5;
+            fiveCon.signalAll();
+            who = 3;
+            threeCon.signalAll();
         } finally {
             lock.unlock();
         }
