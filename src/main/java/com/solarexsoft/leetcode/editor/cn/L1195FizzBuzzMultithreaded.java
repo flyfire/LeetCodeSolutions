@@ -124,10 +124,109 @@ public class L1195FizzBuzzMultithreaded {
             }
         }
     }
-    
 
 //leetcode submit region begin(Prohibit modification and deletion)
-class FizzBuzz {
+    class FizzBuzz {
+        private int n;
+        ReentrantLock lock = new ReentrantLock();
+        Condition threeCon = lock.newCondition();
+        Condition fiveCon = lock.newCondition();
+        Condition fifteenCon = lock.newCondition();
+        Condition numberCon = lock.newCondition();
+
+        volatile int who = 0;
+
+        public FizzBuzz(int n) {
+            this.n = n;
+        }
+
+        // printFizz.run() outputs "fizz".
+        public void fizz(Runnable printFizz) throws InterruptedException {
+            lock.lock();
+            try {
+                for (int i = 1; i <= n; i++) {
+                    if (i % 3 == 0 && i % 5 != 0) {
+                        while (who != 3) {
+                            threeCon.await();
+                        }
+                        printFizz.run();
+                        who = 0;
+                        numberCon.signalAll();
+                    }
+                }
+            } finally {
+                lock.unlock();
+            }
+        }
+
+        // printBuzz.run() outputs "buzz".
+        public void buzz(Runnable printBuzz) throws InterruptedException {
+            lock.lock();
+            try {
+                for (int i = 1; i <= n; i++) {
+                    if (i % 5 == 0 && i % 3 != 0) {
+                        while (who != 5) {
+                            fiveCon.await();
+                        }
+                        printBuzz.run();
+                        who = 0;
+                        numberCon.signalAll();
+                    }
+                }
+            } finally {
+                lock.unlock();
+            }
+        }
+
+        // printFizzBuzz.run() outputs "fizzbuzz".
+        public void fizzbuzz(Runnable printFizzBuzz) throws InterruptedException {
+            lock.lock();
+            try {
+                for (int i = 1; i <= n; i++) {
+                    if (i % 3 == 0 && i % 5 == 0) {
+                        while (who != 15) {
+                            fifteenCon.await();
+                        }
+                        printFizzBuzz.run();
+                        who = 0;
+                        numberCon.signalAll();
+                    }
+                }
+            } finally {
+                lock.unlock();
+            }
+        }
+
+        // printNumber.accept(x) outputs "x", where x is an integer.
+        public void number(IntConsumer printNumber) throws InterruptedException {
+            lock.lock();
+            try {
+                for (int i = 1; i <= n; i++) {
+                    if (i % 5 == 0 && i % 3 == 0) {
+                        who = 15;
+                        fifteenCon.signalAll();
+                        numberCon.await();
+                    } else if (i % 5 == 0 && i % 3 != 0) {
+                        who = 5;
+                        fiveCon.signalAll();
+                        numberCon.await();
+                    } else if (i % 3 == 0 && i % 5 != 0) {
+                        who = 3;
+                        threeCon.signalAll();
+                        numberCon.await();
+                    } else {
+                        printNumber.accept(i);
+                    }
+                }
+            } finally {
+                lock.unlock();
+            }
+        }
+    }
+//leetcode submit region end(Prohibit modification and deletion)
+
+
+class FizzBuzzSemaphore {
     private int n;
 
     Semaphore threeSem = new Semaphore(0);
@@ -135,7 +234,7 @@ class FizzBuzz {
     Semaphore fifteenSem = new Semaphore(0);
     Semaphore numberSem = new Semaphore(0);
 
-    public FizzBuzz(int n) {
+    public FizzBuzzSemaphore(int n) {
         this.n = n;
     }
 
@@ -190,6 +289,5 @@ class FizzBuzz {
         }
     }
 }
-//leetcode submit region end(Prohibit modification and deletion)
 
 }
