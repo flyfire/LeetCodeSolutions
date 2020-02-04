@@ -39,6 +39,7 @@ package com.solarexsoft.leetcode.editor.cn;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.IntConsumer;
@@ -128,13 +129,11 @@ public class L1195FizzBuzzMultithreaded {
 //leetcode submit region begin(Prohibit modification and deletion)
 class FizzBuzz {
     private int n;
-    
-    private volatile int who = 0;
-    ReentrantLock lock = new ReentrantLock();
-    Condition threeCon = lock.newCondition(); // await when who != 3
-    Condition fiveCon = lock.newCondition();  // await when who != 5
-    Condition fifteenCon = lock.newCondition(); // await when who != 15
-    Condition numberCon = lock.newCondition(); // await when who != 0
+
+    Semaphore threeSem = new Semaphore(0);
+    Semaphore fiveSem = new Semaphore(0);
+    Semaphore fifteenSem = new Semaphore(0);
+    Semaphore numberSem = new Semaphore(0);
 
     public FizzBuzz(int n) {
         this.n = n;
@@ -142,93 +141,52 @@ class FizzBuzz {
 
     // printFizz.run() outputs "fizz".
     public void fizz(Runnable printFizz) throws InterruptedException {
-        lock.lock();
-        try {
-            for (int i = 1; i <= n; i++) {
-                while (who != 3) {
-                    threeCon.await();
-                }
-                if (i % 3 == 0 && i % 5 != 0) {
-                    printFizz.run();
-                    who = 0;
-                    numberCon.signalAll();
-                }
+        for (int i = 1; i <= n; i++) {
+            if (i % 3 == 0 && i % 5 != 0) {
+                threeSem.acquire();
+                printFizz.run();
+                numberSem.release();
             }
-        } finally {
-            lock.unlock();
         }
     }
 
     // printBuzz.run() outputs "buzz".
     public void buzz(Runnable printBuzz) throws InterruptedException {
-        lock.lock();
-        try {
-            for (int i = 1; i <= n; i++) {
-                while (who != 5) {
-                    fiveCon.await();
-                }
-                if (i % 5 == 0 && i % 3 != 0) {
-                    printBuzz.run();
-                    who = 0;
-                    numberCon.signalAll();
-                }
+        for (int i = 1; i <= n; i++) {
+            if (i % 5 == 0 && i % 3 != 0) {
+                fiveSem.acquire();
+                printBuzz.run();
+                numberSem.release();
             }
-        } finally {
-            lock.unlock();
         }
     }
 
     // printFizzBuzz.run() outputs "fizzbuzz".
     public void fizzbuzz(Runnable printFizzBuzz) throws InterruptedException {
-        lock.lock();
-        try {
-            for (int i = 1; i <= n; i++) {
-                while (who != 15) {
-                    fifteenCon.await();
-                }
-                if (i % 3 == 0 && i % 5 == 0) {
-                    printFizzBuzz.run();
-                    who = 0;
-                    numberCon.signalAll();
-                }
+        for (int i = 1; i <= n; i++) {
+            if (i % 3 == 0 && i % 5 == 0) {
+                fifteenSem.acquire();
+                printFizzBuzz.run();
+                numberSem.release();
             }
-        } finally {
-            lock.unlock();
         }
     }
 
     // printNumber.accept(x) outputs "x", where x is an integer.
     public void number(IntConsumer printNumber) throws InterruptedException {
-        lock.lock();
-        try {
-            for (int i = 1; i <= n; i++) {
-                while (who != 0) {
-                    numberCon.await();
-                }
-                if (i % 15 == 0) {
-                    who = 15;
-                    fifteenCon.signalAll();
-                    numberCon.await();
-                } else if (i % 5 == 0) {
-                    who = 5;
-                    fiveCon.signalAll();
-                    numberCon.await();
-                } else if (i % 3 == 0) {
-                    who = 3;
-                    threeCon.signalAll();
-                    numberCon.await();
-                } else {
-                    printNumber.accept(i);
-                }
+        for (int i = 1; i <= n; i++) {
+            if (i % 3 == 0 && i % 5 == 0) {
+                fifteenSem.release();
+                numberSem.acquire();
+            } else if (i % 5 == 0 && i % 3 != 0) {
+                fiveSem.release();
+                numberSem.acquire();
+            } else if (i % 3 == 0 && i % 5 != 0) {
+                threeSem.release();
+                numberSem.acquire();
+            } else {
+                printNumber.accept(i);
             }
-            who = 15;
-            fifteenCon.signalAll();
-            who = 5;
-            fiveCon.signalAll();
-            who = 3;
-            threeCon.signalAll();
-        } finally {
-            lock.unlock();
         }
     }
 }
