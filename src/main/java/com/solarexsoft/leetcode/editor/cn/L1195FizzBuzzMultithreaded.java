@@ -36,6 +36,9 @@
  */
 package com.solarexsoft.leetcode.editor.cn;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadInfo;
+import java.lang.management.ThreadMXBean;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.IntConsumer;
@@ -51,6 +54,10 @@ public class L1195FizzBuzzMultithreaded {
          threadB.start();
          threadC.start();
          threadD.start();
+
+        ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
+        ThreadInfo[] threadInfos = threadMXBean.dumpAllThreads(true, true);
+        System.out.println(threadInfos);
     }
     
     static class FizzBuzzRunnable implements Runnable {
@@ -121,7 +128,6 @@ public class L1195FizzBuzzMultithreaded {
 //leetcode submit region begin(Prohibit modification and deletion)
 class FizzBuzz {
     private int n;
-    private int threeMax,fiveMax,fifteenMax;
     
     private volatile int who = 0;
     ReentrantLock lock = new ReentrantLock();
@@ -132,32 +138,21 @@ class FizzBuzz {
 
     public FizzBuzz(int n) {
         this.n = n;
-        fifteenMax = n / 15 * 15;
-        int fiveMod = n / 5;
-        if (fiveMod % 3 == 0) {
-            fiveMax = (fiveMod - 1) * 5;
-        } else {
-            fiveMax = fiveMod * 5;
-        }
-        int threeMod = n / 3;
-        if (threeMod % 5 == 0) {
-            threeMax = (threeMod - 1) * 3;
-        } else {
-            threeMax = threeMod * 3;
-        }
     }
 
     // printFizz.run() outputs "fizz".
     public void fizz(Runnable printFizz) throws InterruptedException {
         lock.lock();
         try {
-            for (int i = 3; i <= threeMax; i+=3) {
+            for (int i = 1; i <= n; i++) {
                 while (who != 3) {
                     threeCon.await();
                 }
-                printFizz.run();
-                who = 0;
-                numberCon.signalAll();
+                if (i % 3 == 0 && i % 5 != 0) {
+                    System.out.println(i + " --> fizz");
+                    who = 0;
+                    numberCon.signalAll();
+                }
             }
         } finally {
             lock.unlock();
@@ -168,13 +163,15 @@ class FizzBuzz {
     public void buzz(Runnable printBuzz) throws InterruptedException {
         lock.lock();
         try {
-            for (int i = 5; i <= fiveMax; i+=5) {
+            for (int i = 1; i <= n; i++) {
                 while (who != 5) {
                     fiveCon.await();
                 }
-                printBuzz.run();
-                who = 0;
-                numberCon.signalAll();
+                if (i % 5 == 0 && i % 3 != 0) {
+                    System.out.println(i + " --> buzz");
+                    who = 0;
+                    numberCon.signalAll();
+                }
             }
         } finally {
             lock.unlock();
@@ -185,13 +182,15 @@ class FizzBuzz {
     public void fizzbuzz(Runnable printFizzBuzz) throws InterruptedException {
         lock.lock();
         try {
-            for (int i = 15; i <= fifteenMax; i+=15) {
+            for (int i = 1; i <= n; i++) {
                 while (who != 15) {
                     fifteenCon.await();
                 }
-                printFizzBuzz.run();
-                who = 0;
-                numberCon.signalAll();
+                if (i % 3 == 0 && i % 5 == 0) {
+                    System.out.println(i + " --> fizzbuzz");
+                    who = 0;
+                    numberCon.signalAll();
+                }
             }
         } finally {
             lock.unlock();
@@ -205,9 +204,6 @@ class FizzBuzz {
             for (int i = 1; i <= n; i++) {
                 while (who != 0) {
                     numberCon.await();
-                }
-                if (i > n) {
-                    break;
                 }
                 if (i % 15 == 0) {
                     who = 15;
@@ -225,12 +221,6 @@ class FizzBuzz {
                     printNumber.accept(i);
                 }
             }
-//            who = 15;
-//            fifteenCon.signalAll();
-//            who = 5;
-//            fiveCon.signalAll();
-//            who = 3;
-//            threeCon.signalAll();
         } finally {
             lock.unlock();
         }
