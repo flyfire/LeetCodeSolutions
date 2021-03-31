@@ -7,12 +7,12 @@
 + 文件名
 
 ```
-L${question.frontendQuestionId}$!velocityTool.camelCaseName(${question.titleSlug})
+L${question.questionId}$!velocityTool.camelCaseName(${question.titleSlug})
 ```
 
 + 文件模板
 
-```java
+```
 ${question.content}
 /*
  * Author: Solarex
@@ -20,10 +20,10 @@ ${question.content}
  * SolutionComments: https://solarex.github.io/leetcode-solution-comments/
  */
 package com.solarexsoft.leetcode.editor.cn;
-public class L${question.frontendQuestionId}$!velocityTool.camelCaseName(${question.titleSlug}) {
+public class L${question.questionId}$!velocityTool.camelCaseName(${question.titleSlug}) {
     public static void main(String[] args) {
-         Solution solution = new L${question.frontendQuestionId}$!velocityTool.camelCaseName(${question.titleSlug})().new Solution();
+         Solution solution = new L${question.questionId}$!velocityTool.camelCaseName(${question.titleSlug})().new Solution();
     }
-    ${question.code}
+${question.code}
 }
 ```
